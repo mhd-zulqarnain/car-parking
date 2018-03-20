@@ -22,6 +22,8 @@ import java.util.Date;
 import zee.example.com.carparking.R;
 import zee.example.com.carparking.models.BookedParking;
 import zee.example.com.carparking.models.ParkPlace;
+import zee.example.com.carparking.service.ServiceError;
+import zee.example.com.carparking.service.ServiceListener;
 import zee.example.com.carparking.utilities.Messege;
 import zee.example.com.carparking.utilities.utils;
 
@@ -64,12 +66,13 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
         TextView sttv;
         TextView endtv;
         TextView desTv;
-        Button btn;
+        Button bookBtn;
+        //        Button cancelBtn;
         ParkPlace parkPlace;
         View holderView;
         DatabaseReference ref;
-        String timeIn = null;
-        String timeOut = null;
+        String timeIn = " ";
+        String timeOut = " ";
         Calendar calendar = Calendar.getInstance();
 
         public MyViewHolder(View itemView) {
@@ -77,12 +80,14 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
             endtv = itemView.findViewById(R.id.ending_time);
             sttv = itemView.findViewById(R.id.starting_time);
             desTv = itemView.findViewById(R.id.parking_des);
-            btn = itemView.findViewById(R.id.book_btn);
+            bookBtn = itemView.findViewById(R.id.book_btn);
+//            cancelBtn = itemView.findViewById(R.id.cancel_btn);
             holderView = itemView;
             ref = FirebaseDatabase.getInstance().getReference("allocted");
             sttv.setOnClickListener(this);
             endtv.setOnClickListener(this);
-            btn.setOnClickListener(this);
+//            cancelBtn.setOnClickListener(this);
+            bookBtn.setOnClickListener(this);
 
         }
 
@@ -90,15 +95,61 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
             this.parkPlace = parkPlace;
             int postion = getAdapterPosition() + 1;
             desTv.setText("Parking place " + postion);
-            if (parkPlace.getAlocated().equals("false"))
+            if (parkPlace.getAlocated().equals("false")) {
                 holderView.setBackgroundColor(Color.GREEN);
-            else {
+                sttv.setEnabled(true);
+                endtv.setEnabled(true);
+                bookBtn.setEnabled(true);
+            } else {
                 holderView.setBackgroundColor(Color.RED);
                 sttv.setEnabled(false);
                 endtv.setEnabled(false);
-                btn.setEnabled(false);
+                bookBtn.setEnabled(false);
+                checkExpiry(parkPlace.getPid());
             }
 
+            /*utils.isParkBelong(parkPlace.getPid(), utils.getActiveUserUid(), new ServiceListener() {
+                @Override
+                public void success(Object obj) {
+                    Messege.messege(ctx,obj.toString());
+                    if(!obj.equals(null))
+                    cancelBtn.setEnabled(true);
+                }
+
+                @Override
+                public void fail(ServiceError error) {
+
+                }
+            });*/
+
+        }
+
+        private void checkExpiry(String pid) {
+
+            utils.isExpire(pid, new ServiceListener() {
+                @Override
+                public void success(Object obj) {
+                    if(!obj.equals(null))
+                    {
+                        BookedParking res= (BookedParking) obj;
+                        Long timeOut =Long.parseLong(res.getTimeOut());
+                        Long cuurentTime=System.currentTimeMillis();
+
+//                        Messege.messege(ctx,"time out"+res.getTimeOut()+"current time"+cuurentTime);
+                        if(cuurentTime-timeOut<0){
+                            ref = FirebaseDatabase.getInstance().getReference("parking");
+                            ref.child(res.getPid()).child("alocated").setValue("false");
+                        }
+                        endtv.setText("out:"+res.getTimeOut()+"\n current"+cuurentTime);
+                    }
+//                    Messege.messege(ctx, obj.toString());
+                }
+
+                @Override
+                public void fail(ServiceError error) {
+                    Messege.messege(ctx,"error in call back");
+                }
+            });
         }
 
         @Override
@@ -115,24 +166,27 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
                         calendar.get(Calendar.MINUTE), false);
 
                 d.show();
-            } else if (view.getId() == R.id.book_btn) {
-                if (!timeIn.equals(null) && !timeOut.equals(null)) {
 
-                    if(utils.isValidTime(timeIn,timeOut)) {
+            }/*cancel booking*/
+            /*else if (view.getId() == R.id.cancel_btn) {
+
+            }*/ /*did booking*/
+            else if (view.getId() == R.id.book_btn) {
+                if (!timeIn.equals(" ") && !timeOut.equals(" ")) {
+
+                    if (utils.isValidTime(timeIn, timeOut)) {
                         String parkId = parkPlace.getPid();
                         BookedParking bkprk = new BookedParking(timeIn, timeOut, parkId, utils.getActiveUserUid());
                         ref.child(parkId).setValue(bkprk);
-
                         ref = FirebaseDatabase.getInstance().getReference("parking");
                         ref.child(parkId).child("alocated").setValue("true");
                         Messege.messege(ctx, "Booked ");
-                    }
-                    else {
+                    } else {
                         Messege.messege(ctx, "Invalid time selection ");
 
                     }
                 } else {
-                    Messege.messege(ctx, "Select both time   ");
+                    Messege.messege(ctx, "Select both time ");
 
                 }
 
@@ -151,6 +205,7 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
                 String formattedDate = df.format(c);
 
                 Calendar calendar = Calendar.getInstance();
+                endtv.setText(hourOfDay + " " + minute);
                 String time = utils.getTimeStamp(formattedDate, hourOfDay, minute);
 //                endtv.setText(time);
                 timeIn = time;

@@ -58,7 +58,13 @@ public class ParkingAreaActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+                ParkPlace prk = dataSnapshot.getValue(ParkPlace.class);
+                int index = getIndexOf(prk.getPid());
+                if (index != -1) {
+                    list.remove(index);
+                    list.add(index,prk);
+                    adapter.notifyItemChanged(index);
+                }
             }
 
             @Override
@@ -76,6 +82,15 @@ public class ParkingAreaActivity extends AppCompatActivity {
 
             }
         });
+    }
+    public int getIndexOf(String key) {
+        for (int i = 0; i < list.size(); i++) {
+            ParkPlace mj = list.get(i);
+            if (mj.getPid().equals(key)) {
+                return list.indexOf(mj);
+            }
+        }
+        return -1;
     }
 
 }

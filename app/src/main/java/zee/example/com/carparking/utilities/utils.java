@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
+import zee.example.com.carparking.models.BookedParking;
 import zee.example.com.carparking.models.ParkPlace;
 import zee.example.com.carparking.service.ServiceListener;
 
@@ -135,6 +137,42 @@ public class utils {
 
     }
 
+    public static void isParkBelong(String pid, String uid, final ServiceListener listener) {
+        count = 0;
+        ref = FirebaseDatabase.getInstance().getReference("allocted").child(pid).child("user");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("", "onDataChange: " + dataSnapshot.getValue());
+                listener.success(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public static void isExpire(String pid,final ServiceListener listener) {
+        count = 0;
+        ref = FirebaseDatabase.getInstance().getReference("allocted").child(pid);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("", "onDataChange: "+dataSnapshot);
+                BookedParking obj = dataSnapshot.getValue(BookedParking.class);
+                Log.d("", "onDataChange: " + dataSnapshot.getValue());
+                listener.success(obj);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public static void hideKeyboard(Activity context) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(context.getCurrentFocus().getWindowToken(), 0);
@@ -155,10 +193,10 @@ public class utils {
     }
 
     public static String getDate(String args) {
-
-        Date date = new Date();
-        Timestamp timestamp = new Timestamp(date.getTime());
-        return timestamp.toString();
+        long time = Long.parseLong(args);
+        Date df = new java.util.Date(time);
+        String vv = new SimpleDateFormat("MM dd, yyyy hh:mma").format(df);
+        return vv;
     }
 
     public static String getActiveUserUid() {
@@ -168,8 +206,8 @@ public class utils {
     }
 
     public static Boolean isValidTime(String timeIn, String timeOut) {
-        int in = Integer.parseInt(timeIn);
-        int out = Integer.parseInt(timeOut);
+        long in = Long.parseLong(timeIn);
+        long out = Long.parseLong(timeOut);
 
         if (in > out) {
             return true;
