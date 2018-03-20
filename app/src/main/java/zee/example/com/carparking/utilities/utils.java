@@ -139,13 +139,12 @@ public class utils {
     }
 
     public static void isParkBelong(String pid, String uid, final ServiceListener listener) {
-        count = 0;
         ref = FirebaseDatabase.getInstance().getReference("allocted").child(pid).child("user");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d("", "onDataChange: " + dataSnapshot.getValue());
-                listener.success(dataSnapshot);
+                listener.success(dataSnapshot.getValue());
             }
 
             @Override
@@ -185,7 +184,6 @@ public class utils {
             String mString = date + " " + hours + ":" + min + ":" + "00.000";
             Date parsedDate = dateFormat.parse(mString);
             long time = parsedDate.getTime();
-            Timestamp timestamp = new java.sql.Timestamp(parsedDate.getTime());
             return String.valueOf(time);
         } catch (Exception e) { //this generic but you can control another types of exception
             e.printStackTrace();

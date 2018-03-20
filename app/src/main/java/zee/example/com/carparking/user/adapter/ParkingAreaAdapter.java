@@ -72,7 +72,7 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
         TextView endtv;
         TextView desTv;
         Button bookBtn;
-         ImageButton detailBtn;
+        ImageButton detailBtn;
         ParkPlace parkPlace;
         View holderView;
         DatabaseReference ref;
@@ -158,7 +158,7 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
 
             }/*cancel booking*/
             else if (view.getId() == R.id.detail_btn) {
-                DialogFragment dialog = BookDialogFragment.newInstance(parkPlace.getPid(),utils.getActiveUserUid());
+                DialogFragment dialog = BookDialogFragment.newInstance(parkPlace.getPid(),utils.getActiveUserUid(),parkPlace.getAlocated());
                 dialog.show(((FragmentActivity) ctx).getSupportFragmentManager().beginTransaction(), "mydialog");
 
 
@@ -195,7 +195,7 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
                 String formattedDate = df.format(c);
                 endtv.setText(hourOfDay + " " + minute);
                 String time = utils.getTimeStamp(formattedDate, hourOfDay, minute);
-                timeOut = time;
+                    timeOut = time;
                 endtv.setText(utils.getDate(time));
 
             }

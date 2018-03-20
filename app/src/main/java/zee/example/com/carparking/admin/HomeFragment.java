@@ -96,10 +96,15 @@ public class HomeFragment extends Fragment {
                     adapter.notifyDataSetChanged();
                 }
             }
-
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+                ParkPlace prk = dataSnapshot.getValue(ParkPlace.class);
+                int index = getIndexOf(prk.getPid());
+                if (index != -1) {
+                    pList.remove(index);
+                    pList.add(index,prk);
+                    adapter.notifyItemChanged(index);
+                }
             }
 
             @Override
