@@ -69,7 +69,12 @@ public class ParkingAreaActivity extends AppCompatActivity {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                ParkPlace prk = dataSnapshot.getValue(ParkPlace.class);
+                int index = getIndexOf(prk.getPid());
+                if (index != -1) {
+                    list.remove(index);
+                    adapter.notifyItemRemoved(index);
+                }
             }
 
             @Override

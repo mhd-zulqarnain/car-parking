@@ -4,23 +4,40 @@
     android:layout_height="match_parent"
     android:background="#fff"
     android:orientation="vertical"
+    android:layout_margin="12dp"
     >
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
 
 
-    <TimePicker
-        android:id="@+id/time_Picker"
+    </LinearLayout>
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/prk_status"
         android:layout_gravity="center"
+        android:text="status"
+        android:textSize="34sp"
+        android:layout_margin="12dp"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_cancel"
+        android:layout_gravity="center"
+        android:text="Cancel"
+        android:enabled="false"
         />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/btn_close"
-        android:layout_gravity="center"
         android:text="done"
-
+        android:layout_margin="12dp"
         />
 
 </LinearLayout>

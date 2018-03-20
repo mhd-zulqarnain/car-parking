@@ -17,6 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -209,10 +210,11 @@ public class utils {
         long in = Long.parseLong(timeIn);
         long out = Long.parseLong(timeOut);
 
-        if (in > out) {
+        if (in < out) {
             return true;
         } else
             return false;
     }
+
 
 }

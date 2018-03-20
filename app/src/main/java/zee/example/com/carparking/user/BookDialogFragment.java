@@ -14,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import zee.example.com.carparking.R;
@@ -25,13 +27,15 @@ import zee.example.com.carparking.utilities.Messege;
  */
 
 public class BookDialogFragment extends DialogFragment {
-    TextView tv;
-    TimePicker timePicker;
+    TextView prkStatus;
+    Button btnCancel;
     Button btnClose;
+    DatabaseReference ref;
 
-    public static DialogFragment newInstance(String pid) {
+    public static DialogFragment newInstance(String pid,String uid) {
         Bundle obj = new Bundle();
         obj.putString("pid", pid);
+        obj.putString("uid", uid);
 
         BookDialogFragment frg = new BookDialogFragment();
         frg.setArguments(obj);
@@ -46,26 +50,20 @@ public class BookDialogFragment extends DialogFragment {
         alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         alertDialog.setContentView(R.layout.booking_dialog_view);
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        ref = FirebaseDatabase.getInstance().getReference("allocted");
         String parkingId = getArguments().getString("pid");
+        String uid = getArguments().getString("uid");
 
-        timePicker =alertDialog.findViewById(R.id.time_Picker);
-        btnClose =alertDialog.findViewById(R.id.btn_close);
-       /* tv = alertDialog.findViewById(R.id.parking_id);
-        tv.setText(parkingId);*/
-        /*
-        Picasso.with(getActivity()).load(img).fit().into(prfView);*/
+      btnClose =alertDialog.findViewById(R.id.btn_close);
+      prkStatus =alertDialog.findViewById(R.id.prk_status);
+      btnCancel =alertDialog.findViewById(R.id.btn_cancel);
 
-       /* btnSelect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dismiss();
-            }
-        });*/
        btnClose.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
                alertDialog.dismiss();
-               Messege.messege(getContext(), String.valueOf(timePicker.getMinute()));
+//               Messege.messege(getContext(), String.valueOf(timePicker.getMinute()));
 
            }
        });

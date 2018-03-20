@@ -22,13 +22,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Book" />
-        <Button
-            android:id="@+id/cancel_btn"
-            android:layout_width="0dp"
+        <ImageButton
+            android:id="@+id/detail_btn"
+            android:layout_width=".5dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:enabled="false"
-            android:text="Cancel" />
+            android:src="@drawable/ic_detail_black_24dp"
+            />
     </LinearLayout>
 
     <LinearLayout

@@ -3,11 +3,15 @@ package zee.example.com.carparking.user.adapter;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -24,6 +28,7 @@ import zee.example.com.carparking.models.BookedParking;
 import zee.example.com.carparking.models.ParkPlace;
 import zee.example.com.carparking.service.ServiceError;
 import zee.example.com.carparking.service.ServiceListener;
+import zee.example.com.carparking.user.BookDialogFragment;
 import zee.example.com.carparking.utilities.Messege;
 import zee.example.com.carparking.utilities.utils;
 
@@ -67,7 +72,7 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
         TextView endtv;
         TextView desTv;
         Button bookBtn;
-        //        Button cancelBtn;
+         ImageButton detailBtn;
         ParkPlace parkPlace;
         View holderView;
         DatabaseReference ref;
@@ -81,12 +86,12 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
             sttv = itemView.findViewById(R.id.starting_time);
             desTv = itemView.findViewById(R.id.parking_des);
             bookBtn = itemView.findViewById(R.id.book_btn);
-//            cancelBtn = itemView.findViewById(R.id.cancel_btn);
+            detailBtn = itemView.findViewById(R.id.detail_btn);
             holderView = itemView;
-            ref = FirebaseDatabase.getInstance().getReference("allocted");
+
             sttv.setOnClickListener(this);
             endtv.setOnClickListener(this);
-//            cancelBtn.setOnClickListener(this);
+            detailBtn.setOnClickListener(this);
             bookBtn.setOnClickListener(this);
 
         }
@@ -108,20 +113,6 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
                 checkExpiry(parkPlace.getPid());
             }
 
-            /*utils.isParkBelong(parkPlace.getPid(), utils.getActiveUserUid(), new ServiceListener() {
-                @Override
-                public void success(Object obj) {
-                    Messege.messege(ctx,obj.toString());
-                    if(!obj.equals(null))
-                    cancelBtn.setEnabled(true);
-                }
-
-                @Override
-                public void fail(ServiceError error) {
-
-                }
-            });*/
-
         }
 
         private void checkExpiry(String pid) {
@@ -134,15 +125,13 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
                         BookedParking res= (BookedParking) obj;
                         Long timeOut =Long.parseLong(res.getTimeOut());
                         Long cuurentTime=System.currentTimeMillis();
-
-//                        Messege.messege(ctx,"time out"+res.getTimeOut()+"current time"+cuurentTime);
-                        if(cuurentTime-timeOut<0){
-                            ref = FirebaseDatabase.getInstance().getReference("parking");
-                            ref.child(res.getPid()).child("alocated").setValue("false");
+                        Log.d("", "show current: "+cuurentTime);
+                        if(cuurentTime>timeOut){
+                            DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("parking");
+                            mRef.child(res.getPid()).child("alocated").setValue("false");
                         }
-                        endtv.setText("out:"+res.getTimeOut()+"\n current"+cuurentTime);
+
                     }
-//                    Messege.messege(ctx, obj.toString());
                 }
 
                 @Override
@@ -168,14 +157,17 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
                 d.show();
 
             }/*cancel booking*/
-            /*else if (view.getId() == R.id.cancel_btn) {
+            else if (view.getId() == R.id.detail_btn) {
+                DialogFragment dialog = BookDialogFragment.newInstance(parkPlace.getPid(),utils.getActiveUserUid());
+                dialog.show(((FragmentActivity) ctx).getSupportFragmentManager().beginTransaction(), "mydialog");
 
-            }*/ /*did booking*/
+
+            } /*did booking*/
             else if (view.getId() == R.id.book_btn) {
                 if (!timeIn.equals(" ") && !timeOut.equals(" ")) {
-
                     if (utils.isValidTime(timeIn, timeOut)) {
                         String parkId = parkPlace.getPid();
+                        ref = FirebaseDatabase.getInstance().getReference("allocted");
                         BookedParking bkprk = new BookedParking(timeIn, timeOut, parkId, utils.getActiveUserUid());
                         ref.child(parkId).setValue(bkprk);
                         ref = FirebaseDatabase.getInstance().getReference("parking");
@@ -183,7 +175,6 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
                         Messege.messege(ctx, "Booked ");
                     } else {
                         Messege.messege(ctx, "Invalid time selection ");
-
                     }
                 } else {
                     Messege.messege(ctx, "Select both time ");
@@ -195,20 +186,16 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
 
         }
 
-        /*time picker listeners */
+        /*--------------------------time picker listeners ----------------------------------------------*/
         private TimePickerDialog.OnTimeSetListener timeEndSetListener = new TimePickerDialog.OnTimeSetListener() {
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 Date c = Calendar.getInstance().getTime();
-                System.out.println("Current time => " + c);
 
                 SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
                 String formattedDate = df.format(c);
-
-                Calendar calendar = Calendar.getInstance();
                 endtv.setText(hourOfDay + " " + minute);
                 String time = utils.getTimeStamp(formattedDate, hourOfDay, minute);
-//                endtv.setText(time);
-                timeIn = time;
+                timeOut = time;
                 endtv.setText(utils.getDate(time));
 
             }
@@ -217,15 +204,10 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
         private TimePickerDialog.OnTimeSetListener timeStartSetListener = new TimePickerDialog.OnTimeSetListener() {
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 Date c = Calendar.getInstance().getTime();
-                System.out.println("Current time => " + c);
-
                 SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
                 String formattedDate = df.format(c);
-
-                Calendar calendar = Calendar.getInstance();
                 String time = utils.getTimeStamp(formattedDate, hourOfDay, minute);
-                timeOut = time;
-//                sttv.setText(time);
+                timeIn = time;
                 sttv.setText(utils.getDate(time));
             }
         };
