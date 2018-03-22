@@ -9,6 +9,13 @@
     tools:context="zee.example.com.carparking.user.UserHomeActivity">
 
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/testing"
+        android:text="testing"/>
+
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="User Panel"

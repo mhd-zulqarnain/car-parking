@@ -20,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import zee.example.com.carparking.R;
+import zee.example.com.carparking.models.Booked;
 import zee.example.com.carparking.service.ServiceError;
 import zee.example.com.carparking.service.ServiceListener;
 import zee.example.com.carparking.utilities.Messege;
@@ -39,7 +40,8 @@ public class BookDialogFragment extends DialogFragment implements View.OnClickLi
     private String isBook;
     private String uid;
 
-    Dialog alertDialog ;
+    Dialog alertDialog;
+
     public static DialogFragment newInstance(String pid, String uid, String isBook) {
         Bundle obj = new Bundle();
         obj.putString("pid", pid);
@@ -81,28 +83,23 @@ public class BookDialogFragment extends DialogFragment implements View.OnClickLi
     }
 
     private void updateUi() {
-        if (isBook.equals("true")) {
-            utils.isParkBelong(parkingId, uid, new ServiceListener() {
-                @Override
-                public void success(Object obj) {
-                    String ob = obj.toString();
-                    if (ob.equals(uid)) {
-                        btnCancel.setEnabled(true);
-                        btnCancel.setVisibility(View.VISIBLE);
-                    }
+        utils.isParkBelong(parkingId, uid, new ServiceListener() {
+            @Override
+            public void success(Object obj) {
+                Booked ob = (Booked) obj;
+                if (ob.getUser().equals(uid) && ob.getPid().equals(parkingId)) {
+                    prkStatus.setText("Parking is booked");
+                    btnCancel.setEnabled(true);
+                    btnCancel.setVisibility(View.VISIBLE);
                 }
+            }
 
-                @Override
-                public void fail(ServiceError error) {
+            @Override
+            public void fail(ServiceError error) {
 
-                }
-            });
-            prkStatus.setText("Parking is booked");
+            }
+        });
 
-        }
-        else {
-            prkStatus.setText("Parking is Avaliable");
-        }
 
     }
 
@@ -113,7 +110,7 @@ public class BookDialogFragment extends DialogFragment implements View.OnClickLi
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.btn_cancel){
+        if (view.getId() == R.id.btn_cancel) {
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("allocted");
             reference.child(parkingId).removeValue();
             ref = FirebaseDatabase.getInstance().getReference("parking");
