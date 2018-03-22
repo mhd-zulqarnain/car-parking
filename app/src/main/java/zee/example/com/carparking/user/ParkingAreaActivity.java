@@ -164,7 +164,7 @@ public class ParkingAreaActivity extends AppCompatActivity implements View.OnCli
 
         }
     }
-    public void clear() {
+    public  void clear() {
         final int size = list.size();
         if (size > 0) {
             for (int i = 0; i < size; i++) {

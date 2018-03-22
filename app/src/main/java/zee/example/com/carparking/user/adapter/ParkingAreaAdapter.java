@@ -40,12 +40,12 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
     String timeOut = " ";
     TextView warnTv;
 
-    public ParkingAreaAdapter(Context ctx, ArrayList<ParkPlace> data, String timeIn, String timeOut,TextView warnTv) {
+    public ParkingAreaAdapter(Context ctx, ArrayList<ParkPlace> data, String timeIn, String timeOut, TextView warnTv) {
         this.ctx = ctx;
         this.data = data;
-        this.timeIn=timeIn;
-        this.timeOut=timeOut;
-        this.warnTv=warnTv;
+        this.timeIn = timeIn;
+        this.timeOut = timeOut;
+        this.warnTv = warnTv;
     }
 
     @Override
@@ -61,11 +61,10 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
 //        holder.tv.setText(data.get(position).getAlocated());
-        if(data.size()==0){
+        if (data.size() == 0) {
             warnTv.setText("No parking avaliable");
             warnTv.setVisibility(View.VISIBLE);
-        }
-        else
+        } else
             warnTv.setVisibility(View.GONE);
         holder.bindView(data.get(position));
     }
@@ -115,11 +114,13 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
             utils.isBooked(parkPlace.getPid(), in, out, new ServiceListener() {
                 @Override
                 public void success(Object obj) {
-                    Messege.messege(ctx,"Book1");
+                    Messege.messege(ctx, "Book1");
                     Booked booked = (Booked) obj;
-                    Log.d("", "success: "+booked.getPid());
-                    if(booked.getPid().equals(parkPlace.getPid()))
-                    bookBtn.setBackgroundColor(Color.RED);
+                    Log.d("", "success: " + booked.getPid());
+                    if (booked.getPid().equals(parkPlace.getPid())) {
+                        bookBtn.setBackgroundColor(Color.RED);
+                        bookBtn.setEnabled(false);
+                    }
                 }
 
                 @Override
@@ -163,12 +164,12 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
                 dialog.show(((FragmentActivity) ctx).getSupportFragmentManager().beginTransaction(), "mydialog");
 
             } //**did booking*//*
-             else if (view.getId() == R.id.book_btn) {
+            else if (view.getId() == R.id.book_btn) {
                 ref = FirebaseDatabase.getInstance().getReference("bookings");
                 String parkId = parkPlace.getPid();
-                String area= parkPlace.getArea();
-                String bookingId= ref.push().getKey();
-                Booked bkprk = new Booked(timeIn, timeOut, parkId, utils.getActiveUserUid(),area,bookingId);
+                String area = parkPlace.getArea();
+                String bookingId = ref.push().getKey();
+                Booked bkprk = new Booked(timeIn, timeOut, parkId, utils.getActiveUserUid(), area, bookingId);
                 ref.child(bookingId).setValue(bkprk);
 
                 /*ref = FirebaseDatabase.getInstance().getReference("parking");

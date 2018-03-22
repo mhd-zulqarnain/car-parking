@@ -169,14 +169,18 @@ public class utils {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Booked obj = snapshot.getValue(Booked.class);
                     String pid = obj.getPid();
+
+                    Long timIn = Long.valueOf(obj.getTimeIn());
+                    Long timOut = Long.valueOf(obj.getTimeOut());
+
                     if (obj.getPid().equals(pid)) {
-                        Long timIn = Long.valueOf(obj.getTimeIn());
-                        Long timOut = Long.valueOf(obj.getTimeOut());
-                        if (timIn < in && timOut > out /*&& timOut < in*/) {
-//                            if ( /*&& in < timOut*/)
-                                listener.success(obj);
-//                                if (timOut > in)
-//                                    if (timOut < out)
+                        if (timIn <= in && timOut >= out) {
+                             listener.success(obj);
+                        }
+                        else if(timIn<=in && timOut>=in){
+                            listener.success(obj);
+                        }else if(timIn<=out && timOut>=out){
+                            listener.success(obj);
                         }
 
                     }
