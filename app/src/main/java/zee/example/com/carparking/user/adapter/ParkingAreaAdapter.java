@@ -82,7 +82,7 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
         View holderView;
         DatabaseReference ref;
 
-        String bookingId="";
+        String bookingId = "";
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -116,38 +116,41 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
 
                 }
             });
-
+            checkExpiry();
         }
 
-        private void checkExpiry(String pid) {
-
-            utils.isExpire(pid, new ServiceListener() {
+        private void checkExpiry() {
+            utils.isParkingExpire(new ServiceListener() {
                 @Override
                 public void success(Object obj) {
-                    if (!obj.equals(null)) {
-                        Booked res = (Booked) obj;
-                        Long timeOut = Long.parseLong(res.getTimeOut());
-                        Long cuurentTime = System.currentTimeMillis();
-                        Log.d("", "show current: " + cuurentTime);
-                        if (cuurentTime > timeOut) {
-                            DatabaseReference mRef = FirebaseDatabase.getInstance().getReference("parking");
-                            mRef.child(res.getPid()).child("alocated").setValue("false");
-                        }
-
+                    if(obj.toString()==parkPlace.getPid()){
+                        int index =getIndex(obj.toString());
+                        if(index!=-1)
+                            notifyItemChanged(index);
                     }
                 }
 
                 @Override
                 public void fail(ServiceError error) {
-                    Messege.messege(ctx, "error in call back");
+
                 }
             });
+        }
+
+        public int getIndex(String pid) {
+            for (int i = 0; i < data.size(); i++) {
+                ParkPlace mj = data.get(i);
+                if (mj.getPid().equals(pid)) {
+                    return data.indexOf(mj);
+                }
+            }
+            return -1;
         }
 
         @Override
         public void onClick(View view) {
             if (view.getId() == R.id.detail_btn) {
-                DialogFragment dialog = BookDialogFragment.newInstance(parkPlace.getPid(), utils.getActiveUserUid(), parkPlace.getAlocated(),bookingId);
+                DialogFragment dialog = BookDialogFragment.newInstance(parkPlace.getPid(), utils.getActiveUserUid(), parkPlace.getAlocated(), bookingId);
                 dialog.show(((FragmentActivity) ctx).getSupportFragmentManager().beginTransaction(), "mydialog");
             } //**did booking*//*
             else if (view.getId() == R.id.book_btn) {
@@ -157,8 +160,10 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
                 String bookingId = ref.push().getKey();
                 Booked bkprk = new Booked(timeIn, timeOut, parkId, utils.getActiveUserUid(), area, bookingId);
                 ref.child(bookingId).setValue(bkprk);
+                notifyItemChanged(getAdapterPosition());
 
             }
         }
+
     }
 }

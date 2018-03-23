@@ -121,13 +121,13 @@ public class LoginActivity extends AppCompatActivity {
                             Intent intent = new Intent(LoginActivity.this, UserHomeActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
-                           // finish();
+                            finish();
 
                 } else if (type.equals("admin")) {
                             Intent intent = new Intent(LoginActivity.this, AdminHomeActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
-                           // finish();
+                            finish();
 
                 }
             }

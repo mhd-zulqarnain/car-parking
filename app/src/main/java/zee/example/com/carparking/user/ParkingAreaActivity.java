@@ -42,6 +42,7 @@ public class ParkingAreaActivity extends AppCompatActivity implements View.OnCli
     TextView sttv;
     TextView endtv;
     TextView warnTv;
+    TextView titleDate;
 
     Button fBtn;
     String timeIn = " ";
@@ -55,11 +56,13 @@ public class ParkingAreaActivity extends AppCompatActivity implements View.OnCli
         calendar = Calendar.getInstance();
         aid = getIntent().getStringExtra("area");
         setTitle("Parking detail of " + aid);
+
         rv = findViewById(R.id.recycler_parking_activity);
         sttv = findViewById(R.id.starting_time);
         endtv = findViewById(R.id.ending_time);
         fBtn = findViewById(R.id.btn_filter);
         warnTv = findViewById(R.id.txt_warn);
+        titleDate = findViewById(R.id.text_title_date);
 
         sttv.setOnClickListener(this);
         endtv.setOnClickListener(this);
@@ -70,14 +73,15 @@ public class ParkingAreaActivity extends AppCompatActivity implements View.OnCli
 
         timeIn = sttv.getText().toString();
         timeOut = endtv.getText().toString();
-
-
+        Long cuurentTime = System.currentTimeMillis();
+        String date = utils.getDate(cuurentTime.toString());
+        titleDate.setText("Booking Date: " + date.substring(0, 11));
 
     }
 
     private void updateUi() {
 
-        adapter = new ParkingAreaAdapter(this, list, timeIn, timeOut,warnTv);
+        adapter = new ParkingAreaAdapter(this, list, timeIn, timeOut, warnTv);
         rv.setAdapter(adapter);
         ref = FirebaseDatabase.getInstance().getReference("parking");
         ref.addChildEventListener(new ChildEventListener() {
@@ -149,22 +153,28 @@ public class ParkingAreaActivity extends AppCompatActivity implements View.OnCli
             d.show();
 
         } else if (view.getId() == R.id.btn_filter) {
-            if (!timeIn.equals(" ") && !timeOut.equals(" ")) {
-                if (utils.isValidTime(timeIn, timeOut)) {
-                    if(list.size()==0)
-                    updateUi();
-                    else {
-                        clear();
-                        updateUi();
+            long now = System.currentTimeMillis();
+            long in = Long.parseLong(timeIn);
+            if (in >= now) {
+                if (!timeIn.equals(" ") && !timeOut.equals(" ")) {
+                    if (utils.isValidTime(timeIn, timeOut)) {
+                        if (list.size() == 0)
+                            updateUi();
+                        else {
+                            clear();
+                            updateUi();
+                        }
+                    } else {
+                        Messege.messege(ctx, "Invalid time selection ");
                     }
-                } else {
-                    Messege.messege(ctx, "Invalid time selection ");
                 }
-            }
+            } else
+                Messege.messege(ctx, "Time in has passed ");
 
         }
     }
-    public  void clear() {
+
+    public void clear() {
         final int size = list.size();
         if (size > 0) {
             for (int i = 0; i < size; i++) {
@@ -185,7 +195,7 @@ public class ParkingAreaActivity extends AppCompatActivity implements View.OnCli
             endtv.setText(hourOfDay + " " + minute);
             String time = utils.getTimeStamp(formattedDate, hourOfDay, minute);
             timeOut = time;
-            endtv.setText(utils.getDate(time));
+            endtv.setText(utils.getDate(time).substring(11));
 
         }
     };
@@ -197,7 +207,7 @@ public class ParkingAreaActivity extends AppCompatActivity implements View.OnCli
             String formattedDate = df.format(c);
             String time = utils.getTimeStamp(formattedDate, hourOfDay, minute);
             timeIn = time;
-            sttv.setText(utils.getDate(time));
+            sttv.setText(utils.getDate(time).substring(11));
         }
     };
 }

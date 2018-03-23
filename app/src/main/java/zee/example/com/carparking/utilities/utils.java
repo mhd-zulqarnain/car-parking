@@ -14,6 +14,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import zee.example.com.carparking.models.Booked;
@@ -137,6 +138,45 @@ public class utils {
             }
         });
     }
+    public static void isParkingExpire( final ServiceListener listener) {
+        ref = FirebaseDatabase.getInstance().getReference("bookings");
+        ref.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot snapshot, String s) {
+                    Booked obj = snapshot.getValue(Booked.class);
+                    String pid = obj.getPid();
+                    Long out = Long.parseLong(obj.getTimeOut());
+                    Long now = System.currentTimeMillis();
+                    if(now> out){
+                        ref.child(obj.getbid()).removeValue();
+                        listener.success(pid);
+                    }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Booked obj = dataSnapshot.getValue(Booked.class);
+                String pid = obj.getPid();
+                    ref.child(obj.getbid()).removeValue();
+                    listener.success(pid);
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     public static void isExpire(String pid, final ServiceListener listener) {
         count = 0;
@@ -232,4 +272,5 @@ public class utils {
         } else
             return false;
     }
-}
+
+    }

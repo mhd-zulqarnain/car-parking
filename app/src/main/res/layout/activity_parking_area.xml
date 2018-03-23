@@ -8,6 +8,14 @@
     tools:context="zee.example.com.carparking.user.ParkingAreaActivity">
 
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:id="@+id/text_title_date"
+        android:text="Booking Date:"
+        android:fontFamily="fonts/Mina-Bold.ttf"
+        />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
