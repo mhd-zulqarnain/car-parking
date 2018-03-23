@@ -60,7 +60,6 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-//        holder.tv.setText(data.get(position).getAlocated());
         if (data.size() == 0) {
             warnTv.setText("No parking avaliable");
             warnTv.setVisibility(View.VISIBLE);
@@ -75,8 +74,7 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        /* TextView sttv;
-         TextView endtv;*/
+
         TextView desTv;
         Button bookBtn;
         ImageButton detailBtn;
@@ -84,42 +82,32 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
         View holderView;
         DatabaseReference ref;
 
+        String bookingId="";
 
         public MyViewHolder(View itemView) {
             super(itemView);
-
             desTv = itemView.findViewById(R.id.parking_des);
             bookBtn = itemView.findViewById(R.id.book_btn);
             detailBtn = itemView.findViewById(R.id.detail_btn);
             holderView = itemView;
             detailBtn.setOnClickListener(this);
             bookBtn.setOnClickListener(this);
-
         }
 
         public void bindView(final ParkPlace parkPlace) {
             this.parkPlace = parkPlace;
             int postion = getAdapterPosition() + 1;
             desTv.setText("Parking place " + postion);
-            /*if (parkPlace.getAlocated().equals("false")) {
-                holderView.setBackgroundColor(Color.GREEN);
-                bookBtn.setEnabled(true);
-            } else {
-                holderView.setBackgroundColor(Color.RED);
-                bookBtn.setEnabled(false);
-                checkExpiry(parkPlace.getPid());
-            }*/
             Long in = Long.parseLong(timeIn);
             Long out = Long.parseLong(timeOut);
             utils.isBooked(parkPlace.getPid(), in, out, new ServiceListener() {
                 @Override
                 public void success(Object obj) {
-                    Messege.messege(ctx, "Book1");
                     Booked booked = (Booked) obj;
-                    Log.d("", "success: " + booked.getPid());
                     if (booked.getPid().equals(parkPlace.getPid())) {
                         bookBtn.setBackgroundColor(Color.RED);
                         bookBtn.setEnabled(false);
+                        bookingId = booked.getbid();
                     }
                 }
 
@@ -158,11 +146,9 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
 
         @Override
         public void onClick(View view) {
-
             if (view.getId() == R.id.detail_btn) {
-                DialogFragment dialog = BookDialogFragment.newInstance(parkPlace.getPid(), utils.getActiveUserUid(), parkPlace.getAlocated());
+                DialogFragment dialog = BookDialogFragment.newInstance(parkPlace.getPid(), utils.getActiveUserUid(), parkPlace.getAlocated(),bookingId);
                 dialog.show(((FragmentActivity) ctx).getSupportFragmentManager().beginTransaction(), "mydialog");
-
             } //**did booking*//*
             else if (view.getId() == R.id.book_btn) {
                 ref = FirebaseDatabase.getInstance().getReference("bookings");
@@ -172,9 +158,6 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
                 Booked bkprk = new Booked(timeIn, timeOut, parkId, utils.getActiveUserUid(), area, bookingId);
                 ref.child(bookingId).setValue(bkprk);
 
-                /*ref = FirebaseDatabase.getInstance().getReference("parking");
-                ref.child(parkId).child("alocated").setValue("true");
-                Messege.messege(ctx, "Booked ");*/
             }
         }
     }

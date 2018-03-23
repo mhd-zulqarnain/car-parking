@@ -39,13 +39,15 @@ public class BookDialogFragment extends DialogFragment implements View.OnClickLi
     private String parkingId;
     private String isBook;
     private String uid;
+    private String bid;  //for checking the valid booking
 
     Dialog alertDialog;
 
-    public static DialogFragment newInstance(String pid, String uid, String isBook) {
+    public static DialogFragment newInstance(String pid, String uid, String isBook,String bid) {
         Bundle obj = new Bundle();
         obj.putString("pid", pid);
         obj.putString("uid", uid);
+        obj.putString("bid", bid);
         obj.putString("isBook", isBook);
         BookDialogFragment frg = new BookDialogFragment();
         frg.setArguments(obj);
@@ -65,6 +67,7 @@ public class BookDialogFragment extends DialogFragment implements View.OnClickLi
         parkingId = getArguments().getString("pid");
         uid = getArguments().getString("uid");
         isBook = getArguments().getString("isBook");
+        bid = getArguments().getString("bid");
 
         btnClose = alertDialog.findViewById(R.id.btn_close);
         prkStatus = alertDialog.findViewById(R.id.prk_status);
@@ -87,7 +90,7 @@ public class BookDialogFragment extends DialogFragment implements View.OnClickLi
             @Override
             public void success(Object obj) {
                 Booked ob = (Booked) obj;
-                if (ob.getUser().equals(uid) && ob.getPid().equals(parkingId)) {
+                if (ob.getUser().equals(uid) && ob.getPid().equals(parkingId) &&ob.getbid().equals(bid)) {
                     prkStatus.setText("Parking is booked");
                     btnCancel.setEnabled(true);
                     btnCancel.setVisibility(View.VISIBLE);
@@ -100,6 +103,9 @@ public class BookDialogFragment extends DialogFragment implements View.OnClickLi
             }
         });
 
+        if(!bid.equals("")){
+            prkStatus.setText("Parking is booked");
+        }
 
     }
 

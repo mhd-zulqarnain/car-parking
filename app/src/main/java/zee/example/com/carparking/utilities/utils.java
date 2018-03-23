@@ -78,7 +78,6 @@ public class utils {
 
     }
 
-
     public static void getParkCount(final String area, final ServiceListener listener) {
         count = 0;
         ref = FirebaseDatabase.getInstance().getReference("parking");
@@ -175,11 +174,10 @@ public class utils {
 
                     if (obj.getPid().equals(pid)) {
                         if (timIn <= in && timOut >= out) {
-                             listener.success(obj);
-                        }
-                        else if(timIn<=in && timOut>=in){
                             listener.success(obj);
-                        }else if(timIn<=out && timOut>=out){
+                        } else if (timIn <= in && timOut >= in) {
+                            listener.success(obj);
+                        } else if (timIn <= out && timOut >= out) {
                             listener.success(obj);
                         }
 
@@ -206,7 +204,7 @@ public class utils {
             Date parsedDate = dateFormat.parse(mString);
             long time = parsedDate.getTime();
             return String.valueOf(time);
-        } catch (Exception e) { //this generic but you can control another types of exception
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -234,6 +232,4 @@ public class utils {
         } else
             return false;
     }
-
-
 }
