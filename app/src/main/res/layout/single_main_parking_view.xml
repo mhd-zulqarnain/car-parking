@@ -2,12 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="12dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#fff"
+    android:layout_marginBottom="23dp"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="12dp"
         android:orientation="horizontal">
 
         <TextView
@@ -19,55 +22,22 @@
         <Button
             android:id="@+id/book_btn"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_weight="1"
+            android:background="#a3a3a4"
+            android:textColor="#fff"
             android:text="Book" />
         <ImageButton
             android:id="@+id/detail_btn"
-            android:layout_width=".5dp"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
             android:layout_weight="1"
+            android:layout_marginLeft="2dp"
+            android:background="#a3a3a4"
             android:src="@drawable/ic_detail_black_24dp"
             />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="24dp"
-        android:orientation="horizontal"
-        android:layout_margin="10dp">
-
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_clock"
-            android:background="@null"
-            />
-        <TextView
-            android:id="@+id/starting_time"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="16dp"
-
-            android:text="Starting time"
-            />
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_clock"
-            android:background="@null"
-            />
-        <TextView
-            android:id="@+id/ending_time"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="16dp"
-            android:text="Ending time"
-            />
-
-    </LinearLayout>
 
 
 </LinearLayout>

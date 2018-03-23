@@ -1,9 +1,7 @@
 package zee.example.com.carparking.utilities;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Build;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 
@@ -15,13 +13,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
-import zee.example.com.carparking.models.BookedParking;
+import zee.example.com.carparking.models.Booked;
 import zee.example.com.carparking.models.ParkPlace;
 import zee.example.com.carparking.service.ServiceListener;
 
@@ -47,22 +43,6 @@ public class utils {
         } else
             return maufacaturer.toLowerCase() + " " + model;
     }
-
-   /* public static String getIMEI() {
-        TelephonyManager telephonyManager = (TelephonyManager) MyApplication.getContext().getSystemService(Context.TELEPHONY_SERVICE);
-        return telephonyManager.getDeviceId();
-    }*/
-
-   /* public static void updateFcm(String refreshedToken) {
-        String mKey = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        HashMap<String, String> fcm = new HashMap<String, String>();
-        fcm.put("token", refreshedToken);
-        fcm.put("device", utils.getDeviceName());
-
-        DatabaseReference ref = FirebaseDatabase.getInstance().
-                getReference("users").child(mKey).child("fcm").child(getIMEI());
-        ref.setValue(fcm);
-    }*/
 
     public static String getuseype() {
         FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -98,7 +78,6 @@ public class utils {
         return usertype;
 
     }
-
 
     public static void getParkCount(final String area, final ServiceListener listener) {
         count = 0;
@@ -138,13 +117,58 @@ public class utils {
 
     }
 
-    public static void isParkBelong(String pid, String uid, final ServiceListener listener) {
-        ref = FirebaseDatabase.getInstance().getReference("allocted").child(pid).child("user");
+    public static void isParkBelong(String pid, final String uid, final ServiceListener listener) {
+        ref = FirebaseDatabase.getInstance().getReference("bookings");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("", "onDataChange: " + dataSnapshot.getValue());
-                listener.success(dataSnapshot.getValue());
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Booked obj = snapshot.getValue(Booked.class);
+                    String pid = obj.getPid();
+                    if (obj.getPid().equals(pid) && obj.getUser().equals(uid))
+                        listener.success(obj);
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+    public static void isParkingExpire( final ServiceListener listener) {
+        ref = FirebaseDatabase.getInstance().getReference("bookings");
+        ref.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot snapshot, String s) {
+                    Booked obj = snapshot.getValue(Booked.class);
+                    String pid = obj.getPid();
+                    Long out = Long.parseLong(obj.getTimeOut());
+                    Long now = System.currentTimeMillis();
+                    if(now> out){
+                        ref.child(obj.getbid()).removeValue();
+                        listener.success(pid);
+                    }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Booked obj = dataSnapshot.getValue(Booked.class);
+                String pid = obj.getPid();
+                    ref.child(obj.getbid()).removeValue();
+                    listener.success(pid);
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
             }
 
             @Override
@@ -154,16 +178,51 @@ public class utils {
         });
     }
 
-    public static void isExpire(String pid,final ServiceListener listener) {
+    public static void isExpire(String pid, final ServiceListener listener) {
         count = 0;
         ref = FirebaseDatabase.getInstance().getReference("allocted").child(pid);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("", "onDataChange: "+dataSnapshot);
-                BookedParking obj = dataSnapshot.getValue(BookedParking.class);
+                Log.d("", "onDataChange: " + dataSnapshot);
+                Booked obj = dataSnapshot.getValue(Booked.class);
                 Log.d("", "onDataChange: " + dataSnapshot.getValue());
                 listener.success(obj);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public static void isBooked(final String pid, final Long in, final Long out, final ServiceListener listener) {
+        count = 0;
+
+
+        ref = FirebaseDatabase.getInstance().getReference("bookings");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Booked obj = snapshot.getValue(Booked.class);
+                    String pid = obj.getPid();
+
+                    Long timIn = Long.valueOf(obj.getTimeIn());
+                    Long timOut = Long.valueOf(obj.getTimeOut());
+
+                    if (obj.getPid().equals(pid)) {
+                        if (timIn <= in && timOut >= out) {
+                            listener.success(obj);
+                        } else if (timIn <= in && timOut >= in) {
+                            listener.success(obj);
+                        } else if (timIn <= out && timOut >= out) {
+                            listener.success(obj);
+                        }
+
+                    }
+                }
             }
 
             @Override
@@ -185,7 +244,7 @@ public class utils {
             Date parsedDate = dateFormat.parse(mString);
             long time = parsedDate.getTime();
             return String.valueOf(time);
-        } catch (Exception e) { //this generic but you can control another types of exception
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -214,5 +273,4 @@ public class utils {
             return false;
     }
 
-
-}
+    }

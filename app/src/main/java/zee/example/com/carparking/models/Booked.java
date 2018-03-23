@@ -4,20 +4,24 @@ package zee.example.com.carparking.models;
  * Created by Zul Qarnain on 3/19/2018.
  */
 
-public class BookedParking {
+public class Booked {
     private String timeIn;
     private String timeOut;
     private String pid;
     private String user;
+    private String area;
+    private String bid;
 
-    public BookedParking() {
+    public Booked() {
     }
 
-    public BookedParking(String timeIn, String timeOut, String pid, String user) {
+    public Booked(String timeIn, String timeOut, String pid, String user, String area, String bid) {
         this.timeIn = timeIn;
         this.timeOut = timeOut;
         this.pid = pid;
         this.user = user;
+        this.area = area;
+        this.bid = bid;
     }
 
     public String getTimeIn() {
@@ -50,5 +54,21 @@ public class BookedParking {
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
+    }
+
+    public String getbid() {
+        return bid;
+    }
+
+    public void setbid(String bid) {
+        this.bid = bid;
     }
 }
