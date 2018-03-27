@@ -32,8 +32,9 @@ public class utils {
     public static FirebaseAuth auth = FirebaseAuth.getInstance();
     private static String usertype = null;
     private static DatabaseReference ref;
-    private static String comName = "";
+    private static String flag = "";
     private static int count = 0;
+
 
     public static String getDeviceName() {
         String maufacaturer = Build.MANUFACTURER;
@@ -79,44 +80,6 @@ public class utils {
 
     }
 
-    public static void getParkCount(final String area, final ServiceListener listener) {
-        count = 0;
-        ref = FirebaseDatabase.getInstance().getReference("parking");
-        ref.addChildEventListener(new ChildEventListener() {
-
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                ParkPlace parkPlace = dataSnapshot.getValue(ParkPlace.class);
-                String allocated = parkPlace.getAlocated();
-                if (parkPlace.equals(area) && allocated.equals("false")) {
-                    listener.success(1);
-                }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
-    }
-
     public static void isParkBelong(String pid, final String uid, final ServiceListener listener) {
         ref = FirebaseDatabase.getInstance().getReference("bookings");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -138,6 +101,7 @@ public class utils {
             }
         });
     }
+
     public static void isParkingExpire( final ServiceListener listener) {
         ref = FirebaseDatabase.getInstance().getReference("bookings");
         ref.addChildEventListener(new ChildEventListener() {
@@ -147,7 +111,7 @@ public class utils {
                     String pid = obj.getPid();
                     Long out = Long.parseLong(obj.getTimeOut());
                     Long now = System.currentTimeMillis();
-                    if(now> out){
+                    if(now > out){
                         ref.child(obj.getbid()).removeValue();
                         listener.success(pid);
                     }
@@ -273,4 +237,24 @@ public class utils {
             return false;
     }
 
+    public static void removeParkBooking(final String pid, final String flag){
+        ref = FirebaseDatabase.getInstance().getReference("bookings");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                Booked obj = snapshot.getValue(Booked.class);
+                Log.d("", "add util: "+dataSnapshot);
+                if(obj.getPid().equals(pid)){
+                    ref.child(obj.getbid()).removeValue();
+                }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
     }

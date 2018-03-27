@@ -26,11 +26,6 @@ import zee.example.com.carparking.user.UserHomeActivity;
 import zee.example.com.carparking.utilities.Messege;
 import zee.example.com.carparking.utilities.utils;
 
-/**
- * Created by Zul Qarnain on 3/15/2018.
- */
-
-
 public class AreaListAdapter extends RecyclerView.Adapter<AreaListAdapter.MyViewHolder>{
     ArrayList<Area> data;
     Context ctx;
