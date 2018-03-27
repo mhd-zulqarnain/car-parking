@@ -88,10 +88,15 @@ public class ParkingAreaActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 ParkPlace a = dataSnapshot.getValue(ParkPlace.class);
-                if (a.getArea().equals(aid)) {
-                    list.add(a);
-                    adapter.notifyDataSetChanged();
+
+                int index = getIndexOf(a.getPid());
+                if (index == -1) {
+                    if (a.getArea().equals(aid)) {
+                        list.add(a);
+                        adapter.notifyDataSetChanged();
+                    }
                 }
+
             }
 
             @Override
@@ -119,10 +124,8 @@ public class ParkingAreaActivity extends AppCompatActivity implements View.OnCli
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
     }

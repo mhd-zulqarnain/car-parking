@@ -75,10 +75,10 @@ public class AdminParkingDetail extends AppCompatActivity {
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 Booked prk = dataSnapshot.getValue(Booked.class);
-                int index = getIndexOf(prk.getPid());
+                int index = getIndexOf(prk.getbid());
                 if (index != -1) {
                     list.remove(index);
-                    adapter.notifyItemRemoved(index);
+                    adapter.customNotifyRemove(index);
                 }
             }
 

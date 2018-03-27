@@ -9,6 +9,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 
 import zee.example.com.carparking.R;
@@ -39,11 +42,21 @@ public class AdminDetailAdapter extends RecyclerView.Adapter<AdminDetailAdapter.
     public void onBindViewHolder(MyViewHolder holder, int position) {
         holder.bindView(data.get(position));
         if (data.size() == 0) {
-            warnTv.setText("No parking avaliable");
+            warnTv.setText("No Bookingza avaliable");
             warnTv.setVisibility(View.VISIBLE);
         } else
             warnTv.setVisibility(View.GONE);
         holder.bindView(data.get(position));
+    }
+
+    public void customNotifyRemove(int index){
+        if (data.size() == 0) {
+            warnTv.setText("No Booking avaliable");
+            warnTv.setVisibility(View.VISIBLE);
+        } else
+            warnTv.setVisibility(View.GONE);
+
+        notifyItemRemoved(index);
     }
 
     @Override
@@ -76,6 +89,14 @@ public class AdminDetailAdapter extends RecyclerView.Adapter<AdminDetailAdapter.
             des.setText("Booking :"+booked.getbid().substring(11,15));
             timinTv.setText(in);
             timeoutTv.setText(out);
+
+            delBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference("bookings");
+                    reference.child(booked.getbid()).removeValue();
+                }
+            });
 
         }
     }

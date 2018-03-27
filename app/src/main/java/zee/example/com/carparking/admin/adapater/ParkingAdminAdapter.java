@@ -72,15 +72,7 @@ public class ParkingAdminAdapter extends RecyclerView.Adapter<ParkingAdminAdapte
             this.parkPlace=parkPlace;
             int postion = getAdapterPosition() + 1;
             desTv.setText(parkPlace.getDescription());
-          /*  if (parkPlace.getAlocated().equals("false")) {
-                holderView.setBackgroundColor(Color.GREEN);
-                cancelBtn.setEnabled(false);
 
-            } else {
-                holderView.setBackgroundColor(Color.RED);
-                cancelBtn.setEnabled(true);
-
-            }*/
           itemView.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View view) {
