@@ -1,5 +1,6 @@
 package zee.example.com.carparking.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -23,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 
 import zee.example.com.carparking.R;
+import zee.example.com.carparking.user.UserHomeActivity;
 import zee.example.com.carparking.utilities.Messege;
 import zee.example.com.carparking.utilities.Validation;
 
@@ -122,10 +124,10 @@ public class SignUpActivity extends AppCompatActivity {
             user.put("email", edEmail.getText().toString());
             user.put("uid", auth.getCurrentUser().getUid());
             mDatabase.child("users").child(mKey).setValue(user);
-//            Intent intent = new  Intent(SignUpActivity.this, StudentActivity.class);
-               /* intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent );
-            finish();*/
+        Intent intent = new Intent(SignUpActivity.this, UserHomeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
 
     }
 

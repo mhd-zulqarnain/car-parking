@@ -1,14 +1,19 @@
 package zee.example.com.carparking.admin;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,6 +27,10 @@ import zee.example.com.carparking.R;
 import zee.example.com.carparking.admin.adapater.AdminDetailAdapter;
 import zee.example.com.carparking.models.Booked;
 import zee.example.com.carparking.models.ParkPlace;
+import zee.example.com.carparking.ui.LoginActivity;
+import zee.example.com.carparking.ui.SignUpActivity;
+import zee.example.com.carparking.user.ParkingAreaActivity;
+import zee.example.com.carparking.user.UserHomeActivity;
 import zee.example.com.carparking.user.adapter.ParkingAreaAdapter;
 
 public class AdminParkingDetail extends AppCompatActivity {
@@ -102,5 +111,25 @@ public class AdminParkingDetail extends AppCompatActivity {
             }
         }
         return -1;
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.user_menu,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.user_menu_logout) {
+            FirebaseAuth auth =FirebaseAuth.getInstance();
+            auth.signOut();
+            Intent intent = new Intent(AdminParkingDetail.this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+
+        }
+        return true;
     }
 }

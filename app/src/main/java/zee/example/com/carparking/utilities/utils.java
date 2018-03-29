@@ -203,7 +203,7 @@ public class utils {
 
     public static String getTimeStamp(String date, int hours, int min) {
         try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss.SSS");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss.SSS");
             String mString = date + " " + hours + ":" + min + ":" + "00.000";
             Date parsedDate = dateFormat.parse(mString);
             long time = parsedDate.getTime();
