@@ -8,14 +8,32 @@
     tools:context="zee.example.com.carparking.user.ParkingAreaActivity">
 
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="12dp"
-        android:id="@+id/text_title_date"
-        android:text="Booking Date:"
-        android:fontFamily="fonts/Mina-Bold.ttf"
-        />
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        >
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:layout_marginTop="10dp"
+            android:onClick="selectDate"
+            android:id="@+id/btn_title_date"
+            android:src="@drawable/ic_perm_contact_calendar_black_24dp" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:layout_weight=".3"
+            android:text="Select Booking Date:"
+            android:id="@+id/text_title_date"
+            android:fontFamily="fonts/Mina-Bold.ttf"
+            />
+
+    </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

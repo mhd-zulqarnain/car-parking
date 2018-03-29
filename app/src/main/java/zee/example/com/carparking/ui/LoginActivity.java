@@ -1,11 +1,15 @@
 package zee.example.com.carparking.ui;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -45,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
     private final String TAG = "com.signin.log.zeelog";
     private String userKey;
     private static final int DEVICE_IMEI_PERMISSION = 9;
+    private Snackbar snackbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,10 +63,12 @@ public class LoginActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference("auth");
         //askPermission(Manifest.permission.READ_PHONE_STATE, DEVICE_IMEI_PERMISSION);
-
+        snackbar=Snackbar
+                .make(findViewById(R.id.myLinLayout), "No internet connection!", Snackbar.LENGTH_LONG);
         sessionBar = new ProgressDialog(LoginActivity.this);
         sessionBar.setMessage("Checking session");
         sessionBar.setCancelable(false);
+        //checkConnection();
     }
 
     public void signIn(View v) {
@@ -149,6 +156,14 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    /*private void checkConnection() {
+        boolean isConnected = isConnected();
+        if(!isConnected){
+            snackbar.show();
+            barProgress.setVisibility(View.GONE);
+            sessionBar.dismiss();
+        }
+    }*/
     public void askPermission(String permission, int requestcode) {
         if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{permission}, requestcode);
@@ -171,5 +186,18 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        checkConnection();
+
+    }
+
+    public boolean isConnected() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 }
 

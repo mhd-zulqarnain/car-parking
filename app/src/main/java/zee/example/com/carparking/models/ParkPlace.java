@@ -6,15 +6,15 @@ package zee.example.com.carparking.models;
 
 public class ParkPlace {
     String area;
-    String alocated;
+    String description;
     String pid;
 
     public ParkPlace() {
     }
 
-    public ParkPlace(String area, String alocated, String pid) {
+    public ParkPlace(String area, String description, String pid) {
         this.area = area;
-        this.alocated = alocated;
+        this.description = description;
         this.pid = pid;
     }
 
@@ -26,12 +26,12 @@ public class ParkPlace {
         this.area = area;
     }
 
-    public String getAlocated() {
-        return alocated;
+    public String getDescription() {
+        return description;
     }
 
-    public void setAlocated(String alocated) {
-        this.alocated = alocated;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getPid() {

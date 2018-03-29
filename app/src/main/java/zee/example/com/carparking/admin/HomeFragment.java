@@ -71,7 +71,7 @@ public class HomeFragment extends Fragment {
             public void onClick(View view) {
                 if (pList.size() <3) {
                     String key = ref.push().getKey();
-                    ParkPlace model = new ParkPlace(area, "false", key);
+                    ParkPlace model = new ParkPlace(area, "Parking "+key.substring(9,12), key);
                     ref.child(key).setValue(model);
                 }else
                 Messege.messege(getActivity(), "no more area left");

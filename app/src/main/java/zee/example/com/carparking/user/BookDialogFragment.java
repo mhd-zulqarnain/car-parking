@@ -43,12 +43,11 @@ public class BookDialogFragment extends DialogFragment implements View.OnClickLi
 
     Dialog alertDialog;
 
-    public static DialogFragment newInstance(String pid, String uid, String isBook,String bid) {
+    public static DialogFragment newInstance(String pid, String uid,String bid) {
         Bundle obj = new Bundle();
         obj.putString("pid", pid);
         obj.putString("uid", uid);
         obj.putString("bid", bid);
-        obj.putString("isBook", isBook);
         BookDialogFragment frg = new BookDialogFragment();
         frg.setArguments(obj);
         return frg;
@@ -66,7 +65,6 @@ public class BookDialogFragment extends DialogFragment implements View.OnClickLi
         ref = FirebaseDatabase.getInstance().getReference("allocted");
         parkingId = getArguments().getString("pid");
         uid = getArguments().getString("uid");
-        isBook = getArguments().getString("isBook");
         bid = getArguments().getString("bid");
 
         btnClose = alertDialog.findViewById(R.id.btn_close);
@@ -117,10 +115,8 @@ public class BookDialogFragment extends DialogFragment implements View.OnClickLi
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.btn_cancel) {
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("allocted");
-            reference.child(parkingId).removeValue();
-            ref = FirebaseDatabase.getInstance().getReference("parking");
-            ref.child(parkingId).child("alocated").setValue("false");
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("bookings");
+            reference.child(bid).removeValue();
             alertDialog.dismiss();
 
         }

@@ -97,7 +97,7 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
         public void bindView(final ParkPlace parkPlace) {
             this.parkPlace = parkPlace;
             int postion = getAdapterPosition() + 1;
-            desTv.setText("Parking place " + postion);
+            desTv.setText("Parking" +parkPlace.getPid().substring(9,12));
             Long in = Long.parseLong(timeIn);
             Long out = Long.parseLong(timeOut);
             utils.isBooked(parkPlace.getPid(), in, out, new ServiceListener() {
@@ -150,7 +150,7 @@ public class ParkingAreaAdapter extends RecyclerView.Adapter<ParkingAreaAdapter.
         @Override
         public void onClick(View view) {
             if (view.getId() == R.id.detail_btn) {
-                DialogFragment dialog = BookDialogFragment.newInstance(parkPlace.getPid(), utils.getActiveUserUid(), parkPlace.getAlocated(), bookingId);
+                DialogFragment dialog = BookDialogFragment.newInstance(parkPlace.getPid(), utils.getActiveUserUid(), bookingId);
                 dialog.show(((FragmentActivity) ctx).getSupportFragmentManager().beginTransaction(), "mydialog");
             } //**did booking*//*
             else if (view.getId() == R.id.book_btn) {

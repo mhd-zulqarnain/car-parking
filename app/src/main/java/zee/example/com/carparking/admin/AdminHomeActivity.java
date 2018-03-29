@@ -79,7 +79,9 @@ public class AdminHomeActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.admin_menu_logout) {
             auth.signOut();
-            startActivity(new Intent(AdminHomeActivity.this, LoginActivity.class));
+            Intent intent = new Intent(AdminHomeActivity.this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK |Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
             finish();
         }
         return true;
