@@ -70,7 +70,6 @@ public class ParkingAdminAdapter extends RecyclerView.Adapter<ParkingAdminAdapte
 
         public void bindView(final ParkPlace parkPlace) {
             this.parkPlace=parkPlace;
-            int postion = getAdapterPosition() + 1;
             desTv.setText(parkPlace.getDescription());
 
           itemView.setOnClickListener(new View.OnClickListener() {

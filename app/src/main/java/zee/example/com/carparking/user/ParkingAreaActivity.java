@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -56,6 +57,7 @@ public class ParkingAreaActivity extends AppCompatActivity implements View.OnCli
     String timeIn = " ";
     String timeOut = " ";
     String formattedDate = " ";
+    ImageButton btnSlct;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +74,14 @@ public class ParkingAreaActivity extends AppCompatActivity implements View.OnCli
         fBtn = findViewById(R.id.btn_filter);
         warnTv = findViewById(R.id.txt_warn);
         titleDate = findViewById(R.id.text_title_date);
+        btnSlct = findViewById(R.id.btn_title_date);
 
         sttv.setOnClickListener(this);
         endtv.setOnClickListener(this);
+        btnSlct.setOnClickListener(this);
         fBtn.setOnClickListener(this);
+        btnSlct.setOnClickListener(this);
+        titleDate.setOnClickListener(this);
 
         rv.setLayoutManager(new LinearLayoutManager(this));
         list = new ArrayList<>();
@@ -150,17 +156,34 @@ public class ParkingAreaActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.ending_time) {
-            TimePickerDialog d = new TimePickerDialog(ctx,
-                    timeEndSetListener, calendar.get(Calendar.HOUR_OF_DAY),
-                    calendar.get(Calendar.MINUTE), false);
 
-            d.show();
-        } else if (view.getId() == R.id.starting_time) {
-            TimePickerDialog d = new TimePickerDialog(ctx,
-                    timeStartSetListener, calendar.get(Calendar.HOUR_OF_DAY),
-                    calendar.get(Calendar.MINUTE), false);
+            if (!formattedDate.equals(" ")) {
+                TimePickerDialog d = new TimePickerDialog(ctx,
+                        timeEndSetListener, calendar.get(Calendar.HOUR_OF_DAY),
+                        calendar.get(Calendar.MINUTE), false);
 
-            d.show();
+                d.show();
+            } else
+                Messege.messege(ctx, "Select the date first");
+        }
+        else if(view.getId() == R.id.text_title_date||view.getId() == R.id.btn_title_date){
+            Calendar cal = Calendar.getInstance();
+            int day = cal.get(Calendar.DAY_OF_MONTH);
+            int month = cal.get(Calendar.MONTH);
+            int year = cal.get(Calendar.YEAR);
+            DatePickerDialog datePickerDialog = new DatePickerDialog(ctx, dateSetListener, year, month, day);
+            datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+            datePickerDialog.show();
+        }
+        else if (view.getId() == R.id.starting_time) {
+            if (!formattedDate.equals(" ")) {
+                TimePickerDialog d = new TimePickerDialog(ctx,
+                        timeStartSetListener, calendar.get(Calendar.HOUR_OF_DAY),
+                        calendar.get(Calendar.MINUTE), false);
+
+                d.show();
+            } else
+                Messege.messege(ctx, "Select the date first");
 
         } else if (view.getId() == R.id.btn_filter) {
             long now = System.currentTimeMillis();
@@ -219,15 +242,6 @@ public class ParkingAreaActivity extends AppCompatActivity implements View.OnCli
         return true;
     }
 
-    public void selectDate(View v) {
-        Calendar cal = Calendar.getInstance();
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        int month = cal.get(Calendar.MONTH);
-        int year = cal.get(Calendar.YEAR);
-        DatePickerDialog datePickerDialog = new DatePickerDialog(ctx, dateSetListener, year, month, day);
-        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
-        datePickerDialog.show();
-    }
 
             /*--------------------------time picker listeners ----------------------------------------------*/
 
@@ -244,10 +258,9 @@ public class ParkingAreaActivity extends AppCompatActivity implements View.OnCli
 
     private TimePickerDialog.OnTimeSetListener timeStartSetListener = new TimePickerDialog.OnTimeSetListener() {
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-
-            String time = utils.getTimeStamp(formattedDate, hourOfDay, minute);
-            timeIn = time;
-            sttv.setText(utils.getDate(time).substring(11));
+                String time = utils.getTimeStamp(formattedDate, hourOfDay, minute);
+                timeIn = time;
+                sttv.setText(utils.getDate(time).substring(11));
         }
     };
 
@@ -256,13 +269,13 @@ public class ParkingAreaActivity extends AppCompatActivity implements View.OnCli
     private DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
-            Messege.messege(ctx, selectedDay + " " + selectedMonth + " " + " " + selectedDay);
-            if(selectedMonth>10)
-            formattedDate = selectedDay + "-" + selectedMonth + "-" + selectedYear;
+            selectedMonth=selectedMonth+1;
+            if (selectedMonth > 10)
+                formattedDate = selectedDay + "-" + selectedMonth + "-" + selectedYear;
             else {
                 formattedDate = selectedDay + "-" + "0" + selectedMonth + "-" + selectedYear;
             }
-            titleDate.setText("Booking Date: " +formattedDate);
+            titleDate.setText("Booking Date: " + formattedDate);
 
         }
     };

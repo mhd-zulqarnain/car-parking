@@ -86,7 +86,8 @@ public class AdminDetailAdapter extends RecyclerView.Adapter<AdminDetailAdapter.
             this.booked=booked;
             String in= utils.getDate(booked.getTimeIn()).substring(11);
             String out= utils.getDate(booked.getTimeOut()).substring(11);
-            des.setText("Booking :"+booked.getbid().substring(11,15));
+            String date= utils.getDate(booked.getTimeIn()).substring(0,10);
+            des.setText("Booking :"+booked.getbid().substring(11,15) +"  Date:"+date);
             timinTv.setText(in);
             timeoutTv.setText(out);
 

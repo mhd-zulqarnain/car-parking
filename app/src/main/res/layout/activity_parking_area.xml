@@ -20,13 +20,14 @@
             android:background="@null"
             android:layout_marginTop="10dp"
             android:onClick="selectDate"
+            android:id="@+id/btn_title_date"
             android:src="@drawable/ic_perm_contact_calendar_black_24dp" />
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="12dp"
             android:layout_weight=".3"
-            android:text="Booking Date:"
+            android:text="Select Booking Date:"
             android:id="@+id/text_title_date"
             android:fontFamily="fonts/Mina-Bold.ttf"
             />
